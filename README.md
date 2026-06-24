@@ -1,4 +1,3 @@
-# habit-tracker
 # 🍓 ふぃーくんといちご畑の習慣化アプリ - フロントエンド実装ベース
 
 添付されたUIデザインカンプの世界観（パステルトーン、豊富な余白、手書き風の温かみ）を再現するための、Next.js (App Router) + TypeScript + Tailwind CSS + Zustand のコア実装一式です。
