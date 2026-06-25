@@ -1,454 +1,639 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ふぃーくんといちご畑の習慣化アプリ - ホーム</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        /* --- デザインシステム & リセット --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #F9F6F0; /* PC背景は少しトーンを落としてスマホ画面を際立たせる */
-            font-family: "Zen Maru Gothic", "Noto Sans JP", sans-serif;
-            color: #6E5E58;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ふぃーくんといちご畑の習慣化アプリ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
-        /* --- 画面サイズ・コンテナ（スマホファースト・PC中央寄せ） --- */
-        .app-container {
-            width: 100%;
-             citizens-width: 375px;
-            max-width: 430px;
-            height: 100vh;
-            max-height: 932px; /* 一般的なスマホ縦長画面 */
-            background-color: #FCF8F6;
-            border: 1px solid #E8DAD4;
-            box-shadow: 0 8px 30px rgba(110, 94, 88, 0.06);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            position: relative;
-        }
+:root {
+  --bg:         #FCF8F7;
+  --card:       #FFFCFB;
+  --border:     #EFE4DF;
+  --text-main:  #7E6D66;
+  --text-sub:   #B6AAA4;
+  --accent-pink:#FEEEF3;
+  --accent-peach:#FFF0EA;
+  --accent-mint:#EAF3EC;
+  --accent-yellow:#FFF9ED;
+  --pink-dark:  #D98FA2;
+  --line:       #8D7B74;
+}
 
-        /* スクロールバーの非表示（美観のため） */
-        .app-container::-webkit-scrollbar {
-            width: 0px;
-        }
+body {
+  background: #EDE5E0;
+  font-family: 'M PLUS Rounded 1c','Noto Sans JP',sans-serif;
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
 
-        /* --- メインコンテンツエリア --- */
-        .main-content {
-            flex: 1;
-            padding: 24px 20px 100px 20px; /* 下部ナビ分の余白 */
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+.phone-wrap {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
 
-        /* --- コンポーネント: 挨拶エリア --- */
-        .greeting-section {
-            padding: 4px 4px 0 4px;
-        }
-        .greeting-title {
-            font-size: 16px;
-            font-weight: 700;
-            line-height: 1.5;
-            color: #6E5E58;
-        }
-        .greeting-subtitle {
-            font-size: 13px;
-            font-weight: 400;
-            color: #A79A93;
-            margin-top: 2px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+/* ── STATUS BAR ── */
+.status-bar {
+  height: 44px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.status-right { display:flex; gap:5px; align-items:center; }
 
-        /* --- 共通カードスタイル --- */
-        .card {
-            background-color: #FFFDFB;
-            border-radius: 24px;
-            border: 1px solid #E8DAD4;
-            box-shadow: 0 4px 12px rgba(110, 94, 88, 0.04);
-            padding: 20px;
-        }
+/* ── HEADER ── */
+.header {
+  background: var(--bg);
+  padding: 6px 20px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.header-left { display:flex; align-items:center; gap:8px; }
+.header-title { font-size:14px; font-weight:700; color:var(--text-main); letter-spacing:.02em; }
 
-        /* --- カード1: ふぃーくんメッセージ --- */
-        .character-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            position: relative;
-        }
-        .balloon {
-            position: relative;
-            background: #FFF0EA;
-            border: 1px solid #E8DAD4;
-            border-radius: 16px;
-            padding: 12px 14px;
-            font-size: 12px;
-            line-height: 1.5;
-            font-weight: 500;
-            max-width: 60%;
-        }
-        .balloon::after {
-            content: '';
-            position: absolute;
-            right: -8px;
-            top: 50%;
-            transform: translateY(-50%);
-            border-style: solid;
-            border-width: 6px 0 6px 8px;
-            border-color: transparent transparent transparent #FFF0EA;
-        }
-        .balloon::before {
-            content: '';
-            position: absolute;
-            right: -9px;
-            top: 50%;
-            transform: translateY(-50%);
-            border-style: solid;
-            border-width: 7px 0 7px 9px;
-            border-color: transparent transparent transparent #E8DAD4;
-            z-index: -1;
-        }
-        .character-illustration {
-            width: 90px;
-            height: 90px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+.header-icons { display:flex; gap:10px; align-items:center; }
+.header-icon {
+  width:34px; height:34px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 6px rgba(200,180,170,.10);
+}
 
-        /* --- カード2: 今日のいちご畑 --- */
-        .section-title {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .section-title .action-btn {
-            font-size: 12px;
-            font-weight: 500;
-            color: #A79A93;
-            background: #FFF0EA;
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid #E8DAD4;
-        }
-        .strawberry-field {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 4px 0 12px 0;
-        }
-        .pot-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-        .field-footer-text {
-            font-size: 11px;
-            color: #A79A93;
-            text-align: center;
-            margin-top: 4px;
-            font-weight: 500;
-        }
+/* ── SCROLL AREA ── */
+.scroll-area {
+  padding: 18px 16px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
-        /* --- カード3: 今日のタスク --- */
-        .tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 16px;
-            border-bottom: 1px solid #F3ECE8;
-            padding-bottom: 8px;
-        }
-        .tab {
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            color: #A79A93;
-            font-weight: 500;
-        }
-        .tab.active {
-            background-color: #FEEEF3;
-            color: #6E5E58;
-            font-weight: 700;
-            border: 1px solid #E8DAD4;
-        }
-        .task-group-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: #A79A93;
-            margin: 12px 0 6px 0;
-            padding-left: 2px;
-        }
-        .task-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .task-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 13px;
-            padding: 4px 0;
-        }
-        .task-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .checkbox-circle {
-            width: 18px;
-            height: 18px;
-            border: 1px solid #E8DAD4;
-            border-radius: 50%;
-            background-color: #FFFDFB;
-        }
-        .task-text {
-            font-weight: 400;
-        }
-        .task-tag {
-            font-size: 10px;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-weight: 500;
-            border: 1px solid rgba(232, 218, 212, 0.5);
-        }
-        /* 各タグのパステルカラー指定 */
-        .tag-dance { background-color: #FFF0EA; color: #6E5E58; }
-        .tag-diet { background-color: #FEEEF3; color: #6E5E58; }
-        .tag-language { background-color: #EDE7F6; color: #6E5E58; }
-        .tag-toeic { background-color: #E7F2EA; color: #6E5E58; }
-        .tag-hobby { background-color: #FFF8E5; color: #6E5E58; }
+/* ── CARD BASE ── */
+.card {
+  background: var(--card);
+  border: 1px solid #F2E8E3;
+  border-radius: 28px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.9) inset,
+    0 4px 12px rgba(210,190,180,.08);
+  padding: 24px;
+}
 
-        /* --- 下部ナビゲーション --- */
-        .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 76px;
-            background-color: #FFFDFB;
-            border-top: 1px solid #E8DAD4;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 10px;
-            z-index: 10;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: #A79A93;
-            text-decoration: none;
-            font-size: 10px;
-            font-weight: 500;
-            width: 54px;
-        }
-        .nav-item.active {
-            color: #6E5E58;
-            font-weight: 700;
-        }
-        .nav-icon {
-            width: 22px;
-            height: 22px;
-            fill: none;
-            stroke: #A79A93;
-            stroke-width: 1.6;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        .nav-item.active .nav-icon {
-            stroke: #6E5E58;
-            fill: #FFF0EA; /* アクティブ時のほんのり塗り */
-        }
-    </style>
+/* ── GREETING CARD ── */
+.greeting-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 172px;
+  padding: 24px 24px 20px;
+}
+.greeting-bg-blob {
+  position:absolute; right:-40px; top:-50px;
+  width:220px; height:220px;
+  background: radial-gradient(circle at 60% 40%,
+    rgba(255,210,225,.28) 0%,
+    rgba(255,235,220,.18) 50%,
+    transparent 75%);
+  border-radius: 50%;
+  pointer-events:none;
+}
+.greeting-date {
+  font-size:11px; color:var(--text-sub); font-weight:400; margin-bottom:5px;
+}
+.greeting-text {
+  font-size:17px; font-weight:700; color:var(--text-main); line-height:1.5; margin-bottom:3px;
+}
+.greeting-sub {
+  font-size:12px; color:var(--text-sub); font-weight:400; margin-bottom:18px;
+}
+
+/* Letter bubble */
+.letter-bubble {
+  background: var(--accent-pink);
+  border: 1px solid #F2D0DC;
+  border-radius: 18px;
+  padding: 11px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  position: relative;
+  max-width: 195px;
+}
+.letter-bubble::after {
+  content:'';
+  position:absolute; bottom:-9px; left:22px;
+  border:5px solid transparent;
+  border-top-color:#F2D0DC;
+}
+.letter-bubble::before {
+  content:'';
+  position:absolute; bottom:-7px; left:23px;
+  border:4px solid transparent;
+  border-top-color:var(--accent-pink);
+  z-index:1;
+}
+.letter-bubble-text {
+  font-size:11px; color:var(--pink-dark); font-weight:700; line-height:1.5;
+}
+
+/* fii-kun image */
+.fiikun-wrapper {
+  position:absolute;
+  right:-4px; bottom:-10px;
+  width:138px; height:138px;
+  pointer-events:none;
+}
+.fiikun-wrapper img {
+  width:100%; height:100%;
+  object-fit:contain;
+  display:block;
+}
+
+/* ── FIELD ── */
+.field-header { display:flex; align-items:center; gap:7px; margin-bottom:16px; }
+.field-title { font-size:13px; font-weight:700; color:var(--text-main); }
+
+.pots-row {
+  display:flex; align-items:flex-end;
+  justify-content:space-between;
+  gap:4px; margin-bottom:14px;
+}
+.pot-wrap {
+  display:flex; flex-direction:column; align-items:center; gap:1px; flex:1;
+}
+.pot-plant { height:36px; display:flex; align-items:flex-end; justify-content:center; }
+.pot-svg { width:36px; }
+
+.field-note {
+  font-size:11px; color:var(--text-sub);
+  text-align:center;
+  padding-top:10px;
+  border-top:1px dashed #EDE0D8;
+  line-height:1.6;
+}
+.field-note em { color:var(--pink-dark); font-style:normal; font-weight:700; }
+
+/* ── TASK ── */
+.task-tabs { display:flex; gap:5px; margin-bottom:16px; align-items:center; }
+.tab {
+  padding:5px 13px; border-radius:20px;
+  font-size:12px; font-weight:700;
+  border:1.5px solid var(--border);
+  background:transparent; color:var(--text-sub); cursor:default;
+}
+.tab.active {
+  background:var(--text-main); color:#fff; border-color:var(--text-main);
+}
+.task-add {
+  margin-left:auto; padding:5px 10px; border-radius:20px;
+  font-size:12px; font-weight:700;
+  border:1.5px dashed var(--border);
+  background:transparent; color:var(--text-sub); cursor:default;
+}
+.task-section-label {
+  font-size:10px; font-weight:700; color:var(--text-sub);
+  letter-spacing:.1em; margin:12px 0 8px;
+  text-transform:uppercase;
+  display:flex; align-items:center; gap:6px;
+}
+.task-section-label::after {
+  content:''; flex:1; height:1px; background:var(--border);
+}
+
+.task-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid #F5EDE8;
+}
+.task-item:last-child { border-bottom:none; }
+.task-check {
+  width:20px; height:20px; border-radius:50%;
+  border:1.5px solid #D8C8C0;
+  flex-shrink:0; background:var(--card);
+}
+.task-text { flex:1; font-size:13px; font-weight:500; color:var(--text-main); line-height:1.4; }
+.task-time { font-size:11px; color:var(--text-sub); flex-shrink:0; }
+.task-tag {
+  font-size:10px; font-weight:700; padding:3px 9px;
+  border-radius:12px; flex-shrink:0;
+}
+.tag-dance  { background:#FDE8F0; color:#C07090; }
+.tag-diet   { background:#FFF0EA; color:#C0886A; }
+.tag-lang   { background:#E7F3EB; color:#5A9870; }
+.tag-hobby  { background:#FFF8E5; color:#AA8830; }
+.tag-toeic  { background:#EEEEF8; color:#7878C0; }
+.tag-health { background:#FDE8F0; color:#C07090; }
+.tag-diary  { background:#FFF8E5; color:#AA8830; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:430px;
+  background:var(--card);
+  border-top:1px solid var(--border);
+  padding:8px 0 24px;
+  display:flex; justify-content:space-around; align-items:center;
+  z-index:100;
+  box-shadow:0 -2px 16px rgba(200,180,170,.12);
+}
+.nav-item {
+  display:flex; flex-direction:column; align-items:center; gap:3px; flex:1; cursor:default;
+}
+.nav-icon {
+  width:46px; height:32px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:18px;
+}
+.nav-item.active .nav-icon { background:var(--accent-pink); }
+.nav-label { font-size:10px; color:var(--text-sub); font-weight:500; }
+.nav-item.active .nav-label { color:var(--pink-dark); font-weight:700; }
+</style>
 </head>
 <body>
+<div class="phone-wrap">
 
-    <div class="app-container">
-        <div class="main-content">
-            
-            <div class="greeting-section">
-                <h1 class="greeting-title">おはよう、みおさん</h1>
-                <p class="greeting-subtitle">今日といっしょにがんばろうね！ <span>🐾</span></p>
-            </div>
+<!-- Status Bar -->
+<div class="status-bar">
+  <span>9:41</span>
+  <div class="status-right">
+    <span>▲▲▲</span><span>Wi-Fi</span><span>□</span>
+  </div>
+</div>
 
-            <div class="card character-card">
-                <div class="balloon">
-                    ふぃーくんからの<br>おてがみが届いているよ
-                </div>
-                <div class="character-illustration">
-                    <svg viewBox="0 0 100 100" width="85" height="85">
-                        <ellipse cx="38" cy="25" rx="7" ry="20" fill="#FFFDFB" stroke="#6E5E58" stroke-width="1.5" transform="rotate(-10 38 25)" />
-                        <ellipse cx="38" cy="27" rx="4" ry="14" fill="#C9C2BB" transform="rotate(-10 38 27)" />
-                        <ellipse cx="56" cy="23" rx="7" ry="20" fill="#FFFDFB" stroke="#6E5E58" stroke-width="1.5" transform="rotate(15 56 23)" />
-                        <ellipse cx="56" cy="25" rx="4" ry="14" fill="#C9C2BB" transform="rotate(15 56 25)" />
-                        <ellipse cx="48" cy="72" rx="26" ry="22" fill="#FFFDFB" stroke="#6E5E58" stroke-width="1.5" />
-                        <ellipse cx="47" cy="52" rx="24" ry="20" fill="#FFFDFB" stroke="#6E5E58" stroke-width="1.5" />
-                        <ellipse cx="38" cy="53" rx="6" ry="5" fill="#E8DAD4" opacity="0.6"/>
-                        <ellipse cx="56" cy="53" rx="6" ry="5" fill="#E8DAD4" opacity="0.6"/>
-                        <circle cx="38" cy="53" r="3.5" fill="#6E5E58" />
-                        <circle cx="37" cy="51" r="1" fill="#FFFDFB" />
-                        <circle cx="56" cy="53" r="3.5" fill="#6E5E58" />
-                        <circle cx="55" cy="51" r="1" fill="#FFFDFB" />
-                        <path d="M 47,57 L 47,59 Q 45,61 43,60 M 47,59 Q 49,61 51,60" fill="none" stroke="#6E5E58" stroke-width="1.5" stroke-linecap="round" />
-                        <path d="M 66,68 L 76,68 L 74,78 L 64,78 Z" fill="#E7F2EA" stroke="#6E5E58" stroke-width="1.2" />
-                        <path d="M 74,70 L 82,66" fill="none" stroke="#6E5E58" stroke-width="1.2" />
-                    </svg>
-                </div>
-            </div>
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <!-- Strawberry SVG icon -->
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 17.5 C10 17.5 3 12 3 7.5 C3 5 5 3.5 7.5 4 C8.5 4.2 9.3 4.8 10 5.5 C10.7 4.8 11.5 4.2 12.5 4 C15 3.5 17 5 17 7.5 C17 12 10 17.5 10 17.5Z" fill="#F2A8B0" stroke="#C8848C" stroke-width=".9" stroke-linecap="round"/>
+      <path d="M10 5.5 C10 4 10 2.5 10 2.5" stroke="#8BBF8A" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M10 2.5 C10 2.5 8 1.5 7.5 2.5" stroke="#8BBF8A" stroke-width="1" stroke-linecap="round"/>
+      <path d="M10 2.5 C10 2.5 12 1.5 12.5 2.5" stroke="#8BBF8A" stroke-width="1" stroke-linecap="round"/>
+      <circle cx="7.5" cy="9" r=".9" fill="white" opacity=".7"/>
+      <circle cx="10" cy="7.5" r=".9" fill="white" opacity=".7"/>
+      <circle cx="12.5" cy="9" r=".9" fill="white" opacity=".7"/>
+      <circle cx="8.5" cy="11.5" r=".9" fill="white" opacity=".7"/>
+      <circle cx="11.5" cy="11.5" r=".9" fill="white" opacity=".7"/>
+    </svg>
+    <span class="header-title">ふぃーくんのいちご畑</span>
+  </div>
+  <div class="header-icons">
+    <!-- Bell icon hand-drawn -->
+    <div class="header-icon">
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+        <path d="M8.5 2.5 C8.5 2.5 5 3.5 5 8 L5 12 L12 12 L12 8 C12 3.5 8.5 2.5 8.5 2.5Z" stroke="#8D7B74" stroke-width="1.1" fill="#FFF0EA" stroke-linejoin="round"/>
+        <path d="M7 12 C7 13.1 7.7 14 8.5 14 C9.3 14 10 13.1 10 12" stroke="#8D7B74" stroke-width="1" fill="none" stroke-linecap="round"/>
+        <circle cx="8.5" cy="2.8" r="1" fill="#F2A8B0"/>
+        <path d="M4 12 L13 12" stroke="#8D7B74" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <!-- Gear icon -->
+    <div class="header-icon">
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+        <circle cx="8.5" cy="8.5" r="2.5" stroke="#8D7B74" stroke-width="1.1" fill="#EAF3EC"/>
+        <path d="M8.5 2 L8.5 3.5 M8.5 13.5 L8.5 15 M2 8.5 L3.5 8.5 M13.5 8.5 L15 8.5
+                 M4 4 L5.1 5.1 M11.9 11.9 L13 13 M4 13 L5.1 11.9 M11.9 5.1 L13 4"
+              stroke="#8D7B74" stroke-width="1.1" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+</div>
 
-            <div class="card">
-                <h2 class="section-title">今日のいちご畑</h2>
-                <div class="strawberry-field">
-                    <div class="pot-item">
-                        <svg width="32" height="40" viewBox="0 0 32 40">
-                            <path d="M 16,24 Q 14,14 11,15" fill="none" stroke="#A4C2A8" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M 10,24 L 22,24 L 20,36 L 12,36 Z" fill="#FFF0EA" stroke="#E8DAD4" stroke-width="1.5"/>
-                        </svg>
-                    </div>
-                    <div class="pot-item">
-                        <svg width="32" height="40" viewBox="0 0 32 40">
-                            <path d="M 16,24 Q 16,14 11,14 Q 16,18 16,24 Q 16,15 21,13 Q 17,18 16,24" fill="#A4C2A8" stroke="#A4C2A8" stroke-width="1" stroke-linecap="round"/>
-                            <path d="M 10,24 L 22,24 L 20,36 L 12,36 Z" fill="#FFF0EA" stroke="#E8DAD4" stroke-width="1.5"/>
-                        </svg>
-                    </div>
-                    <div class="pot-item">
-                        <svg width="32" height="40" viewBox="0 0 32 40">
-                            <path d="M 16,24 L 16,16" fill="none" stroke="#A4C2A8" stroke-width="2"/>
-                            <circle cx="16" cy="13" r="4" fill="#FFFDFB" stroke="#E8DAD4" stroke-width="1"/>
-                            <circle cx="16" cy="13" r="1.5" fill="#FFF8E5"/>
-                            <path d="M 10,24 L 22,24 L 20,36 L 12,36 Z" fill="#FFF0EA" stroke="#E8DAD4" stroke-width="1.5"/>
-                        </svg>
-                    </div>
-                    <div class="pot-item">
-                        <svg width="32" height="40" viewBox="0 0 32 40">
-                            <path d="M 16,24 Q 16,14 11,14 Q 16,18 16,24 Q 16,15 21,13 Q 17,18 16,24" fill="#A4C2A8" stroke="#A4C2A8" stroke-width="1" stroke-linecap="round"/>
-                            <path d="M 10,24 L 22,24 L 20,36 L 12,36 Z" fill="#FFF0EA" stroke="#E8DAD4" stroke-width="1.5"/>
-                        </svg>
-                    </div>
-                    <div class="pot-item">
-                        <svg width="32" height="40" viewBox="0 0 32 40">
-                            <path d="M 16,24 Q 17,16 20,17" fill="none" stroke="#A4C2A8" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M 10,24 L 22,24 L 20,36 L 12,36 Z" fill="#FFF0EA" stroke="#E8DAD4" stroke-width="1.5"/>
-                        </svg>
-                    </div>
-                </div>
-                <p class="field-footer-text">あと3つのタスクでいちごが育つよ！</p>
-            </div>
+<!-- Scroll Content -->
+<div class="scroll-area">
 
-            <div class="card">
-                <div class="section-title">
-                    <span>今日のタスク</span>
-                    <span class="action-btn">＋ 追加</span>
-                </div>
-                
-                <div class="tabs">
-                    <span class="tab active">すべて</span>
-                    <span class="tab">Main</span>
-                    <span class="tab">Sub</span>
-                    <span class="tab">Tiny</span>
-                </div>
+  <!-- ① GREETING CARD -->
+  <div class="card greeting-card">
+    <div class="greeting-bg-blob"></div>
+    <div class="greeting-date">2024年5月20日（月）</div>
+    <div class="greeting-text">おはよう、みおさん ✿</div>
+    <div class="greeting-sub">今日もいっしょにがんばろうね！</div>
 
-                <div class="task-group-label">Main</div>
-                <div class="task-list">
-                    <div class="task-item">
-                        <div class="task-left">
-                            <div class="checkbox-circle"></div>
-                            <span class="task-text">ベリーダンス基礎練習 20分</span>
-                        </div>
-                        <span class="task-tag tag-dance">ダンス</span>
-                    </div>
-                    <div class="task-item">
-                        <div class="task-left">
-                            <div class="checkbox-circle"></div>
-                            <span class="task-text">ダイエット：夜ごはん記録</span>
-                        </div>
-                        <span class="task-tag tag-diet">ダイエット</span>
-                    </div>
-                    <div class="task-item">
-                        <div class="task-left">
-                            <div class="checkbox-circle"></div>
-                            <span class="task-text">韓国語リスニング 15分</span>
-                        </div>
-                        <span class="task-tag tag-language">韓国語</span>
-                    </div>
-                </div>
-
-                <div class="task-group-label">Sub</div>
-                <div class="task-list">
-                    <div class="task-item">
-                        <div class="task-left">
-                            <div class="checkbox-circle"></div>
-                            <span class="task-text">TOEIC 単語 20分</span>
-                        </div>
-                        <span class="task-tag tag-toeic">TOEIC</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <nav class="bottom-nav">
-            <a href="#" class="nav-item active">
-                <svg class="nav-icon" viewBox="0 0 24 24">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                <span>ホーム</span>
-            </a>
-            <a href="#" class="nav-item">
-                <svg class="nav-icon" viewBox="0 0 24 24">
-                    <polyline points="9 11 12 14 22 4"/>
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-                </svg>
-                <span>タスク</span>
-            </a>
-            <a href="#" class="nav-item">
-                <svg class="nav-icon" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="12 6 12 12 16 14"/>
-                </svg>
-                <span>タイマー</span>
-            </a>
-            <a href="#" class="nav-item">
-                <svg class="nav-icon" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-                <span>目標</span>
-            </a>
-            <a href="#" class="nav-item">
-                <svg class="nav-icon" viewBox="0 0 24 24">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <polyline points="10 9 9 9 8 9"/>
-                </svg>
-                <span>記録</span>
-            </a>
-        </nav>
+    <div class="letter-bubble">
+      <!-- envelope icon -->
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="none" style="flex-shrink:0">
+        <rect x="1" y="1" width="16" height="12" rx="3" fill="#FDDDE6" stroke="#D98FA2" stroke-width="1"/>
+        <path d="M1.5 2 L9 7.5 L16.5 2" stroke="#D98FA2" stroke-width="1" fill="none" stroke-linecap="round"/>
+        <circle cx="16" cy="1" r="3.5" fill="#F4A7B9" stroke="white" stroke-width="1"/>
+        <path d="M14.5 1 L15.5 2 L17.5 0" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="letter-bubble-text">ふぃーくんからの<br>おてがみが届いているよ</span>
     </div>
 
+    <!-- Fii-kun image -->
+    <div class="fiikun-wrapper">
+      <img src="fiikun-normal.png" alt="ふぃーくん">
+    </div>
+  </div>
+
+  <!-- ② STRAWBERRY FIELD -->
+  <div class="card">
+    <div class="field-header">
+      <!-- small strawberry icon -->
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 14 C8 14 2.5 9.5 2.5 6 C2.5 4 4 3 6 3.5 C6.8 3.7 7.5 4.2 8 4.8 C8.5 4.2 9.2 3.7 10 3.5 C12 3 13.5 4 13.5 6 C13.5 9.5 8 14 8 14Z" fill="#F4B8C0" stroke="#C8848C" stroke-width=".8"/>
+        <path d="M8 4.8 L8 3.5" stroke="#8BBF8A" stroke-width="1" stroke-linecap="round"/>
+        <circle cx="6" cy="7.5" r=".7" fill="white" opacity=".75"/>
+        <circle cx="8" cy="6.5" r=".7" fill="white" opacity=".75"/>
+        <circle cx="10" cy="7.5" r=".7" fill="white" opacity=".75"/>
+      </svg>
+      <span class="field-title">今日のいちご畑</span>
+    </div>
+
+    <div class="pots-row">
+
+      <!-- Pot 1: seedling -->
+      <div class="pot-wrap">
+        <div class="pot-plant">
+          <svg width="30" height="34" viewBox="0 0 30 34">
+            <!-- stem -->
+            <path d="M15 32 C15.2 28 14.8 22 15 16" stroke="#9EC490" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <!-- leaf left -->
+            <path d="M15 22 C12 20 8 21 9 24 C10 27 15 26 15 22Z" fill="#B8D8B0" stroke="#9EC490" stroke-width=".8" fill-opacity=".9"/>
+            <!-- leaf right -->
+            <path d="M15 18 C18 16 22 17 21 20 C20 23 15 22 15 18Z" fill="#A8D0A0" stroke="#9EC490" stroke-width=".8" fill-opacity=".9"/>
+          </svg>
+        </div>
+        <!-- pot watercolor -->
+        <svg class="pot-svg" viewBox="0 0 36 24">
+          <path d="M6 10 C5.5 9 5 8 5 8 L31 8 C31 8 31 9 30.5 10 L28 22 C27.8 23 27 23.5 26 23.5 L10 23.5 C9 23.5 8.2 23 8 22 Z" fill="#DDB88C" stroke="#C9A070" stroke-width=".9" stroke-linejoin="round"/>
+          <path d="M3.5 6 C3.5 5 4.5 4.5 5 4.5 L31 4.5 C31.5 4.5 32.5 5 32.5 6 L32.5 8.5 C32.5 9 32 9.5 31.5 9.5 L4.5 9.5 C4 9.5 3.5 9 3.5 8.5 Z" fill="#C9A070" stroke="#B88C58" stroke-width=".7"/>
+          <!-- soil -->
+          <path d="M7 4.5 L29 4.5 L28.5 2 C28.3 1 27.5 .8 26.5 .8 L9.5 .8 C8.5 .8 7.7 1 7.5 2 Z" fill="#E8D0B0" stroke="#D4B888" stroke-width=".7"/>
+        </svg>
+      </div>
+
+      <!-- Pot 2: two leaves -->
+      <div class="pot-wrap">
+        <div class="pot-plant">
+          <svg width="30" height="34" viewBox="0 0 30 34">
+            <path d="M15 32 C15.2 24 14.8 18 15 12" stroke="#9EC490" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M15 24 C11 22 7 23 8.5 27 C10 30 15 28 15 24Z" fill="#B8D8B0" stroke="#9EC490" stroke-width=".8"/>
+            <path d="M15 20 C19 18 23 19 21.5 23 C20 26 15 24 15 20Z" fill="#A8D0A0" stroke="#9EC490" stroke-width=".8"/>
+            <path d="M15 15 C12 13 9 14 10.5 17 C12 20 15 18 15 15Z" fill="#C4E0BC" stroke="#9EC490" stroke-width=".7"/>
+            <path d="M15 12 C18 10 21 11 19.5 14 C18 17 15 15 15 12Z" fill="#B0D8A8" stroke="#9EC490" stroke-width=".7"/>
+          </svg>
+        </div>
+        <svg class="pot-svg" viewBox="0 0 36 24">
+          <path d="M6 10 C5.5 9 5 8 5 8 L31 8 C31 8 31 9 30.5 10 L28 22 C27.8 23 27 23.5 26 23.5 L10 23.5 C9 23.5 8.2 23 8 22 Z" fill="#DDB88C" stroke="#C9A070" stroke-width=".9"/>
+          <path d="M3.5 6 C3.5 5 4.5 4.5 5 4.5 L31 4.5 C31.5 4.5 32.5 5 32.5 6 L32.5 8.5 C32.5 9 32 9.5 31.5 9.5 L4.5 9.5 C4 9.5 3.5 9 3.5 8.5 Z" fill="#C9A070" stroke="#B88C58" stroke-width=".7"/>
+          <path d="M7 4.5 L29 4.5 L28.5 2 C28.3 1 27.5 .8 26.5 .8 L9.5 .8 C8.5 .8 7.7 1 7.5 2 Z" fill="#E8D0B0" stroke="#D4B888" stroke-width=".7"/>
+        </svg>
+      </div>
+
+      <!-- Pot 3: bud -->
+      <div class="pot-wrap">
+        <div class="pot-plant">
+          <svg width="30" height="34" viewBox="0 0 30 34">
+            <path d="M15 32 C15.2 22 14.8 14 15 8" stroke="#9EC490" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M15 26 C11 24 7 25 8.5 28 C10 31 15 29 15 26Z" fill="#B8D8B0" stroke="#9EC490" stroke-width=".8"/>
+            <path d="M15 21 C19 19 23 20 21.5 24 C20 27 15 25 15 21Z" fill="#A8D0A0" stroke="#9EC490" stroke-width=".8"/>
+            <!-- bud -->
+            <ellipse cx="15" cy="8" rx="5" ry="6.5" fill="#FDDDE6" stroke="#F0B0C0" stroke-width=".9"/>
+            <ellipse cx="15" cy="9" rx="3" ry="4" fill="#F8C8D8"/>
+            <path d="M12 5 C13 3 17 3 18 5" stroke="#9EC490" stroke-width="1" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <svg class="pot-svg" viewBox="0 0 36 24">
+          <path d="M6 10 C5.5 9 5 8 5 8 L31 8 C31 8 31 9 30.5 10 L28 22 C27.8 23 27 23.5 26 23.5 L10 23.5 C9 23.5 8.2 23 8 22 Z" fill="#DDB88C" stroke="#C9A070" stroke-width=".9"/>
+          <path d="M3.5 6 C3.5 5 4.5 4.5 5 4.5 L31 4.5 C31.5 4.5 32.5 5 32.5 6 L32.5 8.5 C32.5 9 32 9.5 31.5 9.5 L4.5 9.5 C4 9.5 3.5 9 3.5 8.5 Z" fill="#C9A070" stroke="#B88C58" stroke-width=".7"/>
+          <path d="M7 4.5 L29 4.5 L28.5 2 C28.3 1 27.5 .8 26.5 .8 L9.5 .8 C8.5 .8 7.7 1 7.5 2 Z" fill="#E8D0B0" stroke="#D4B888" stroke-width=".7"/>
+        </svg>
+      </div>
+
+      <!-- Pot 4: flower -->
+      <div class="pot-wrap">
+        <div class="pot-plant">
+          <svg width="30" height="36" viewBox="0 0 30 36">
+            <path d="M15 34 C15.2 24 14.8 16 15 10" stroke="#9EC490" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M15 28 C11 26 7 27 8.5 30 C10 33 15 31 15 28Z" fill="#B8D8B0" stroke="#9EC490" stroke-width=".8"/>
+            <path d="M15 22 C19 20 23 21 21.5 25 C20 28 15 26 15 22Z" fill="#A8D0A0" stroke="#9EC490" stroke-width=".8"/>
+            <!-- petals -->
+            <ellipse cx="15" cy="5" rx="4" ry="5.5" fill="#FDD8E4" stroke="#F0A8C0" stroke-width=".8" opacity=".9"/>
+            <ellipse cx="15" cy="5" rx="4" ry="5.5" fill="#FDD8E4" stroke="#F0A8C0" stroke-width=".8" opacity=".9" transform="rotate(60 15 9)"/>
+            <ellipse cx="15" cy="5" rx="4" ry="5.5" fill="#FDD8E4" stroke="#F0A8C0" stroke-width=".8" opacity=".9" transform="rotate(120 15 9)"/>
+            <ellipse cx="15" cy="5" rx="4" ry="5.5" fill="#FDD8E4" stroke="#F0A8C0" stroke-width=".8" opacity=".9" transform="rotate(180 15 9)"/>
+            <ellipse cx="15" cy="5" rx="4" ry="5.5" fill="#FDD8E4" stroke="#F0A8C0" stroke-width=".8" opacity=".9" transform="rotate(240 15 9)"/>
+            <ellipse cx="15" cy="5" rx="4" ry="5.5" fill="#FDD8E4" stroke="#F0A8C0" stroke-width=".8" opacity=".9" transform="rotate(300 15 9)"/>
+            <!-- center -->
+            <circle cx="15" cy="9" r="4.5" fill="#FFF4C8" stroke="#E8D870" stroke-width=".8"/>
+            <circle cx="15" cy="9" r="2.5" fill="#F8E848"/>
+          </svg>
+        </div>
+        <svg class="pot-svg" viewBox="0 0 36 24">
+          <path d="M6 10 C5.5 9 5 8 5 8 L31 8 C31 8 31 9 30.5 10 L28 22 C27.8 23 27 23.5 26 23.5 L10 23.5 C9 23.5 8.2 23 8 22 Z" fill="#DDB88C" stroke="#C9A070" stroke-width=".9"/>
+          <path d="M3.5 6 C3.5 5 4.5 4.5 5 4.5 L31 4.5 C31.5 4.5 32.5 5 32.5 6 L32.5 8.5 C32.5 9 32 9.5 31.5 9.5 L4.5 9.5 C4 9.5 3.5 9 3.5 8.5 Z" fill="#C9A070" stroke="#B88C58" stroke-width=".7"/>
+          <path d="M7 4.5 L29 4.5 L28.5 2 C28.3 1 27.5 .8 26.5 .8 L9.5 .8 C8.5 .8 7.7 1 7.5 2 Z" fill="#E8D0B0" stroke="#D4B888" stroke-width=".7"/>
+        </svg>
+      </div>
+
+      <!-- Pot 5: tiny sprout -->
+      <div class="pot-wrap">
+        <div class="pot-plant">
+          <svg width="30" height="34" viewBox="0 0 30 34">
+            <path d="M15 32 C15.1 28 14.9 25 15 22" stroke="#9EC490" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+            <path d="M15 26 C12.5 24.5 10 25 11 27.5 C12 30 15 29 15 26Z" fill="#C4E0BC" stroke="#9EC490" stroke-width=".7"/>
+            <path d="M15 23 C17.5 21.5 20 22 19 24.5 C18 27 15 26 15 23Z" fill="#B4D8AC" stroke="#9EC490" stroke-width=".7"/>
+          </svg>
+        </div>
+        <svg class="pot-svg" viewBox="0 0 36 24">
+          <path d="M6 10 C5.5 9 5 8 5 8 L31 8 C31 8 31 9 30.5 10 L28 22 C27.8 23 27 23.5 26 23.5 L10 23.5 C9 23.5 8.2 23 8 22 Z" fill="#DDB88C" stroke="#C9A070" stroke-width=".9"/>
+          <path d="M3.5 6 C3.5 5 4.5 4.5 5 4.5 L31 4.5 C31.5 4.5 32.5 5 32.5 6 L32.5 8.5 C32.5 9 32 9.5 31.5 9.5 L4.5 9.5 C4 9.5 3.5 9 3.5 8.5 Z" fill="#C9A070" stroke="#B88C58" stroke-width=".7"/>
+          <path d="M7 4.5 L29 4.5 L28.5 2 C28.3 1 27.5 .8 26.5 .8 L9.5 .8 C8.5 .8 7.7 1 7.5 2 Z" fill="#E8D0B0" stroke="#D4B888" stroke-width=".7"/>
+        </svg>
+      </div>
+
+      <!-- Pot 6: seed / tiny -->
+      <div class="pot-wrap">
+        <div class="pot-plant">
+          <svg width="30" height="34" viewBox="0 0 30 34">
+            <path d="M15 32 C15 30 15 29 15 27" stroke="#9EC490" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+            <path d="M15 28.5 C13 27.5 11 28 12 30 C13 31.5 15 31 15 28.5Z" fill="#D0ECC8" stroke="#9EC490" stroke-width=".7"/>
+            <path d="M15 27 C17 26 19 26.5 18 28.5 C17 30 15 29.5 15 27Z" fill="#C4E8BC" stroke="#9EC490" stroke-width=".7"/>
+          </svg>
+        </div>
+        <svg class="pot-svg" viewBox="0 0 36 24">
+          <path d="M6 10 C5.5 9 5 8 5 8 L31 8 C31 8 31 9 30.5 10 L28 22 C27.8 23 27 23.5 26 23.5 L10 23.5 C9 23.5 8.2 23 8 22 Z" fill="#DDB88C" stroke="#C9A070" stroke-width=".9"/>
+          <path d="M3.5 6 C3.5 5 4.5 4.5 5 4.5 L31 4.5 C31.5 4.5 32.5 5 32.5 6 L32.5 8.5 C32.5 9 32 9.5 31.5 9.5 L4.5 9.5 C4 9.5 3.5 9 3.5 8.5 Z" fill="#C9A070" stroke="#B88C58" stroke-width=".7"/>
+          <path d="M7 4.5 L29 4.5 L28.5 2 C28.3 1 27.5 .8 26.5 .8 L9.5 .8 C8.5 .8 7.7 1 7.5 2 Z" fill="#E8D0B0" stroke="#D4B888" stroke-width=".7"/>
+        </svg>
+      </div>
+
+    </div><!-- /pots-row -->
+
+    <div class="field-note">あと<em>3つ</em>のタスクでいちごが育つよ！</div>
+  </div>
+
+  <!-- ③ TASK CARD -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+      <!-- checklist icon hand-drawn -->
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="1.5" y="1.5" width="13" height="13" rx="3.5" stroke="#8D7B74" stroke-width="1.1" fill="#FFF9F5"/>
+        <path d="M4 5.5 L6 7.5 L10 4" stroke="#D98FA2" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 9 L12 9" stroke="#C8B8B0" stroke-width="1" stroke-linecap="round"/>
+        <path d="M4 12 L10 12" stroke="#C8B8B0" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+      <span style="font-size:13px;font-weight:700;color:var(--text-main)">今日のタスク</span>
+    </div>
+
+    <div class="task-tabs">
+      <div class="tab active">すべて</div>
+      <div class="tab">Main</div>
+      <div class="tab">Sub</div>
+      <div class="tab">Tiny</div>
+      <div class="task-add">＋ 追加</div>
+    </div>
+
+    <!-- Main -->
+    <div class="task-section-label">Main</div>
+
+    <div class="task-item">
+      <div class="task-check"></div>
+      <div class="task-text">ベリーダンス基礎練習</div>
+      <div class="task-time">20分</div>
+      <div class="task-tag tag-dance">ダンス</div>
+    </div>
+    <div class="task-item">
+      <div class="task-check"></div>
+      <div class="task-text">ダイエット：夜ごはん記録</div>
+      <div class="task-time"></div>
+      <div class="task-tag tag-diet">ダイエット</div>
+    </div>
+    <div class="task-item">
+      <div class="task-check"></div>
+      <div class="task-text">韓国語リスニング</div>
+      <div class="task-time">15分</div>
+      <div class="task-tag tag-lang">韓国語</div>
+    </div>
+
+    <!-- Sub -->
+    <div class="task-section-label" style="margin-top:14px">Sub</div>
+
+    <div class="task-item">
+      <div class="task-check"></div>
+      <div class="task-text">TOEIC 単語</div>
+      <div class="task-time">20分</div>
+      <div class="task-tag tag-toeic">TOEIC</div>
+    </div>
+    <div class="task-item">
+      <div class="task-check"></div>
+      <div class="task-text">編み物</div>
+      <div class="task-time">30分</div>
+      <div class="task-tag tag-hobby">趣味</div>
+    </div>
+
+    <!-- Tiny -->
+    <div class="task-section-label" style="margin-top:14px">Tiny</div>
+
+    <div class="task-item">
+      <div class="task-check"></div>
+      <div class="task-text">ストレッチ</div>
+      <div class="task-time">5分</div>
+      <div class="task-tag tag-health">美容・健康</div>
+    </div>
+    <div class="task-item">
+      <div class="task-check"></div>
+      <div class="task-text">和菓子日記 1ページ</div>
+      <div class="task-time"></div>
+      <div class="task-tag tag-diary">日記</div>
+    </div>
+  </div>
+
+</div><!-- /scroll-area -->
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <!-- Home -->
+  <div class="nav-item active">
+    <div class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M3 10 L11 3 L19 10 L19 19 C19 19.5 18.5 20 18 20 L14 20 L14 15 C14 14.4 13.6 14 13 14 L9 14 C8.4 14 8 14.4 8 15 L8 20 L4 20 C3.5 20 3 19.5 3 19 Z" fill="#FEEEF3" stroke="#D98FA2" stroke-width="1.1" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="nav-label">ホーム</span>
+  </div>
+  <!-- Task -->
+  <div class="nav-item">
+    <div class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="4" y="3" width="14" height="16" rx="3.5" stroke="#B6AAA4" stroke-width="1.1" fill="#FAFAFA"/>
+        <path d="M7 8 L15 8 M7 11.5 L15 11.5 M7 15 L12 15" stroke="#B6AAA4" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="nav-label">タスク</span>
+  </div>
+  <!-- Timer -->
+  <div class="nav-item">
+    <div class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <circle cx="11" cy="12" r="7.5" stroke="#B6AAA4" stroke-width="1.1" fill="#FAFAFA"/>
+        <path d="M11 8.5 L11 12 L14 14" stroke="#B6AAA4" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 3.5 L13 3.5" stroke="#B6AAA4" stroke-width="1.1" stroke-linecap="round"/>
+        <path d="M11 3.5 L11 5" stroke="#B6AAA4" stroke-width="1.1" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="nav-label">タイマー</span>
+  </div>
+  <!-- Goal -->
+  <div class="nav-item">
+    <div class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <circle cx="11" cy="11" r="8" stroke="#B6AAA4" stroke-width="1.1" fill="#FAFAFA"/>
+        <circle cx="11" cy="11" r="5" stroke="#B6AAA4" stroke-width="1" fill="none"/>
+        <circle cx="11" cy="11" r="2" fill="#C8B8B0"/>
+      </svg>
+    </div>
+    <span class="nav-label">目標</span>
+  </div>
+  <!-- Record -->
+  <div class="nav-item">
+    <div class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="4" y="2" width="14" height="18" rx="3.5" stroke="#B6AAA4" stroke-width="1.1" fill="#FAFAFA"/>
+        <path d="M8 2 L8 5 M14 2 L14 5" stroke="#B6AAA4" stroke-width="1.1" stroke-linecap="round"/>
+        <path d="M4 8 L18 8" stroke="#B6AAA4" stroke-width="1" stroke-linecap="round"/>
+        <rect x="7" y="11" width="2" height="2" rx=".5" fill="#C8B8B0"/>
+        <rect x="10" y="11" width="2" height="2" rx=".5" fill="#C8B8B0"/>
+        <rect x="13" y="11" width="2" height="2" rx=".5" fill="#C8B8B0"/>
+        <rect x="7" y="14.5" width="2" height="2" rx=".5" fill="#C8B8B0"/>
+        <rect x="10" y="14.5" width="2" height="2" rx=".5" fill="#C8B8B0"/>
+      </svg>
+    </div>
+    <span class="nav-label">記録</span>
+  </div>
+  <!-- Reward -->
+  <div class="nav-item">
+    <div class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M11 4 C11 4 7 4 7 7 C7 9 9 9.5 11 9.5 C13 9.5 15 9 15 7 C15 4 11 4 11 4Z" fill="#FAFAFA" stroke="#B6AAA4" stroke-width="1.1" stroke-linecap="round"/>
+        <path d="M7 9.5 L5 18 L17 18 L15 9.5" stroke="#B6AAA4" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 9.5 L11 18" stroke="#B6AAA4" stroke-width="1" stroke-linecap="round"/>
+        <path d="M7 9.5 L17 9.5" stroke="#B6AAA4" stroke-width="1.1" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="nav-label">ごほうび</span>
+  </div>
+</nav>
+
+</div><!-- /phone-wrap -->
 </body>
 </html>
