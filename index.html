@@ -87,3 +87,368 @@
         .character-card {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            position: relative;
+        }
+        .balloon {
+            position: relative;
+            background: #FFF0EA;
+            border: 1px solid #E8DAD4;
+            border-radius: 16px;
+            padding: 12px 14px;
+            font-size: 12px;
+            line-height: 1.5;
+            font-weight: 500;
+            max-width: 60%;
+        }
+        .balloon::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-style: solid;
+            border-width: 6px 0 6px 8px;
+            border-color: transparent transparent transparent #FFF0EA;
+        }
+        .balloon::before {
+            content: '';
+            position: absolute;
+            right: -9px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-style: solid;
+            border-width: 7px 0 7px 9px;
+            border-color: transparent transparent transparent #E8DAD4;
+            z-index: -1;
+        }
+        .character-illustration {
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- カード2: 今日のいちご畑 --- */
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-title .action-btn {
+            font-size: 12px;
+            font-weight: 500;
+            color: #A79A93;
+            background: #FFF0EA;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid #E8DAD4;
+        }
+        .strawberry-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0 12px 0;
+        }
+        .pot-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .field-footer-text {
+            font-size: 11px;
+            color: #A79A93;
+            text-align: center;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* --- カード3: 今日のタスク --- */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #F3ECE8;
+            padding-bottom: 8px;
+        }
+        .tab {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #A79A93;
+            font-weight: 500;
+        }
+        .tab.active {
+            background-color: #FEEEF3;
+            color: #6E5E58;
+            font-weight: 700;
+            border: 1px solid #E8DAD4;
+        }
+        .task-group-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #A79A93;
+            margin: 12px 0 6px 0;
+            padding-left: 2px;
+        }
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkbox-circle {
+            width: 18px;
+            height: 18px;
+            border: 1px solid #E8DAD4;
+            border-radius: 50%;
+            background-color: #FFFDFB;
+        }
+        .task-text {
+            font-weight: 400;
+        }
+        .task-tag {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+            border: 1px solid rgba(232, 218, 212, 0.5);
+        }
+        /* 各タグのパステルカラー指定 */
+        .tag-dance { background-color: #FFF0EA; color: #6E5E58; }
+        .tag-diet { background-color: #FEEEF3; color: #6E5E58; }
+        .tag-language { background-color: #EDE7F6; color: #6E5E58; }
+        .tag-toeic { background-color: #E7F2EA; color: #6E5E58; }
+        .tag-hobby { background-color: #FFF8E5; color: #6E5E58; }
+
+        /* --- 下部ナビゲーション --- */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 76px;
+            background-color: #FFFDFB;
+            border-top: 1px solid #E8DAD4;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 10;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #A79A93;
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: 500;
+            width: 54px;
+        }
+        .nav-item.active {
+            color: #6E5E58;
+            font-weight: 700;
+        }
+        .nav-icon {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: #A79A93;
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .nav-item.active .nav-icon {
+            stroke: #6E5E58;
+            fill: #FFF0EA; /* アクティブ時のほんのり塗り */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="main-content">
+            
+            <div class="greeting-section">
+                <h1 class="greeting-title">おはよう、みおさん</h1>
+                <p class="greeting-subtitle">今日といっしょにがんばろうね！ <span>🐾</span></p>
+            </div>
+
+            <div class="card character-card">
+                <div class="balloon">
+                    ふぃーくんからの<br>おてがみが届いているよ
+                </div>
+                <div class="character-illustration">
+                    <svg viewBox="0 0 100 100" width="85" height="85">
+                        <ellipse cx="38" cy="25" rx="7" ry="20" fill="#FFFDFB" stroke="#6E5E58" stroke-width="1.5" transform="rotate(-10 38 25)" />
+                        <ellipse cx="38" cy="27" rx="4" ry="14" fill="#C9C2BB" transform="rotate(-10 38 27)" />
+                        <ellipse cx="56" cy="23" rx="7" ry="20" fill="#FFFDFB" stroke="#6E5E58" stroke-width="1.5" transform="rotate(15 56 23)" />
+                        <ellipse cx="56" cy="25" rx="4" ry="14" fill="#C9C2BB" transform="rotate(15 56 25)" />
+                        <ellipse cx="48" cy="72" rx="26" ry="22" fill="#FFFDFB" stroke="#6E5E58" stroke-width="1.5" />
+                        <ellipse cx="47" cy="52" rx="24" ry="20" fill="#FFFDFB" stroke="#6E5E58" stroke-width="1.5" />
+                        <ellipse cx="38" cy="53" rx="6" ry="5" fill="#E8DAD4" opacity="0.6"/>
+                        <ellipse cx="56" cy="53" rx="6" ry="5" fill="#E8DAD4" opacity="0.6"/>
+                        <circle cx="38" cy="53" r="3.5" fill="#6E5E58" />
+                        <circle cx="37" cy="51" r="1" fill="#FFFDFB" />
+                        <circle cx="56" cy="53" r="3.5" fill="#6E5E58" />
+                        <circle cx="55" cy="51" r="1" fill="#FFFDFB" />
+                        <path d="M 47,57 L 47,59 Q 45,61 43,60 M 47,59 Q 49,61 51,60" fill="none" stroke="#6E5E58" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M 66,68 L 76,68 L 74,78 L 64,78 Z" fill="#E7F2EA" stroke="#6E5E58" stroke-width="1.2" />
+                        <path d="M 74,70 L 82,66" fill="none" stroke="#6E5E58" stroke-width="1.2" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="section-title">今日のいちご畑</h2>
+                <div class="strawberry-field">
+                    <div class="pot-item">
+                        <svg width="32" height="40" viewBox="0 0 32 40">
+                            <path d="M 16,24 Q 14,14 11,15" fill="none" stroke="#A4C2A8" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M 10,24 L 22,24 L 20,36 L 12,36 Z" fill="#FFF0EA" stroke="#E8DAD4" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+                    <div class="pot-item">
+                        <svg width="32" height="40" viewBox="0 0 32 40">
+                            <path d="M 16,24 Q 16,14 11,14 Q 16,18 16,24 Q 16,15 21,13 Q 17,18 16,24" fill="#A4C2A8" stroke="#A4C2A8" stroke-width="1" stroke-linecap="round"/>
+                            <path d="M 10,24 L 22,24 L 20,36 L 12,36 Z" fill="#FFF0EA" stroke="#E8DAD4" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+                    <div class="pot-item">
+                        <svg width="32" height="40" viewBox="0 0 32 40">
+                            <path d="M 16,24 L 16,16" fill="none" stroke="#A4C2A8" stroke-width="2"/>
+                            <circle cx="16" cy="13" r="4" fill="#FFFDFB" stroke="#E8DAD4" stroke-width="1"/>
+                            <circle cx="16" cy="13" r="1.5" fill="#FFF8E5"/>
+                            <path d="M 10,24 L 22,24 L 20,36 L 12,36 Z" fill="#FFF0EA" stroke="#E8DAD4" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+                    <div class="pot-item">
+                        <svg width="32" height="40" viewBox="0 0 32 40">
+                            <path d="M 16,24 Q 16,14 11,14 Q 16,18 16,24 Q 16,15 21,13 Q 17,18 16,24" fill="#A4C2A8" stroke="#A4C2A8" stroke-width="1" stroke-linecap="round"/>
+                            <path d="M 10,24 L 22,24 L 20,36 L 12,36 Z" fill="#FFF0EA" stroke="#E8DAD4" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+                    <div class="pot-item">
+                        <svg width="32" height="40" viewBox="0 0 32 40">
+                            <path d="M 16,24 Q 17,16 20,17" fill="none" stroke="#A4C2A8" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M 10,24 L 22,24 L 20,36 L 12,36 Z" fill="#FFF0EA" stroke="#E8DAD4" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="field-footer-text">あと3つのタスクでいちごが育つよ！</p>
+            </div>
+
+            <div class="card">
+                <div class="section-title">
+                    <span>今日のタスク</span>
+                    <span class="action-btn">＋ 追加</span>
+                </div>
+                
+                <div class="tabs">
+                    <span class="tab active">すべて</span>
+                    <span class="tab">Main</span>
+                    <span class="tab">Sub</span>
+                    <span class="tab">Tiny</span>
+                </div>
+
+                <div class="task-group-label">Main</div>
+                <div class="task-list">
+                    <div class="task-item">
+                        <div class="task-left">
+                            <div class="checkbox-circle"></div>
+                            <span class="task-text">ベリーダンス基礎練習 20分</span>
+                        </div>
+                        <span class="task-tag tag-dance">ダンス</span>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-left">
+                            <div class="checkbox-circle"></div>
+                            <span class="task-text">ダイエット：夜ごはん記録</span>
+                        </div>
+                        <span class="task-tag tag-diet">ダイエット</span>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-left">
+                            <div class="checkbox-circle"></div>
+                            <span class="task-text">韓国語リスニング 15分</span>
+                        </div>
+                        <span class="task-tag tag-language">韓国語</span>
+                    </div>
+                </div>
+
+                <div class="task-group-label">Sub</div>
+                <div class="task-list">
+                    <div class="task-item">
+                        <div class="task-left">
+                            <div class="checkbox-circle"></div>
+                            <span class="task-text">TOEIC 単語 20分</span>
+                        </div>
+                        <span class="task-tag tag-toeic">TOEIC</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>ホーム</span>
+            </a>
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <polyline points="9 11 12 14 22 4"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+                <span>タスク</span>
+            </a>
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span>タイマー</span>
+            </a>
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <span>目標</span>
+            </a>
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                </svg>
+                <span>記録</span>
+            </a>
+        </nav>
+    </div>
+
+</body>
+</html>
