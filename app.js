@@ -2339,37 +2339,39 @@ function prepareFocusStrawberryPlan() {
   const width = Math.max(rect.width, window.innerWidth, 320);
   const height = Math.max(rect.height, window.innerHeight, 560);
   const totalSeconds = Math.max(timerMinutes * 60, 60);
-  const cols = Math.max(6, Math.floor(width / 42));
-  const rows = Math.max(9, Math.floor(height / 42));
+  const cols = Math.max(6, Math.floor(width / 38));
+  const rows = Math.max(8, Math.floor(height / 40));
   const maxSlots = cols * rows;
-  const targetCount = Math.min(maxSlots, Math.max(28, Math.round(totalSeconds / 9)));
+  const targetCount = Math.min(maxSlots, Math.max(32, Math.round(totalSeconds / 8)));
   const cells = [];
   const cellWidth = width / cols;
   const cellHeight = height / rows;
 
-  for (let row = 0; row < rows; row += 1) {
+  for (let rowFromBottom = 0; rowFromBottom < rows; rowFromBottom += 1) {
+    const rowProgress = rowFromBottom / Math.max(rows - 1, 1);
+    const rowOffset = rowFromBottom % 2 === 0 ? 0 : cellWidth * 0.32;
     for (let col = 0; col < cols; col += 1) {
-      const topBias = row / Math.max(rows - 1, 1);
-      const size = clampNumber(Math.round(Math.min(cellWidth, cellHeight) * (0.56 + Math.random() * 0.34)), 22, 46);
-      const jitterX = (Math.random() - 0.5) * cellWidth * 0.42;
-      const jitterY = (Math.random() - 0.5) * cellHeight * 0.42;
-      const x = clampNumber((col + 0.5) * cellWidth + jitterX, size / 2 + 8, width - size / 2 - 8);
-      const y = clampNumber((row + 0.5) * cellHeight + jitterY, size / 2 + 8, height - size / 2 - 8);
+      const size = clampNumber(Math.round(Math.min(cellWidth, cellHeight) * (0.58 + Math.random() * 0.38)), 22, 48);
+      const jitterX = (Math.random() - 0.5) * cellWidth * 0.34;
+      const jitterY = (Math.random() - 0.5) * cellHeight * 0.22;
+      const x = clampNumber((col + 0.5) * cellWidth + rowOffset + jitterX, size / 2 + 8, width - size / 2 - 8);
+      const y = clampNumber(height - ((rowFromBottom + 0.5) * cellHeight) + jitterY, size / 2 + 8, height - size / 2 - 8);
       cells.push({
         left: (x / width) * 100,
         top: (y / height) * 100,
         size,
         rotate: Math.round(-72 + Math.random() * 144),
         fallRotate: Math.round((Math.random() > 0.5 ? 1 : -1) * (120 + Math.random() * 220)),
-        delayWeight: 0.7 + topBias * 0.6 + Math.random() * 0.3,
+        rowFromBottom,
+        delayWeight: rowProgress + Math.random() * 0.18,
       });
     }
   }
 
-  focusStrawberryPlan = shuffleArray(cells)
+  focusStrawberryPlan = cells
     .sort((a, b) => a.delayWeight - b.delayWeight)
     .slice(0, targetCount);
-  focusStrawberryEverySeconds = Math.max(2.4, totalSeconds / Math.max(targetCount, 1));
+  focusStrawberryEverySeconds = Math.max(2, totalSeconds / Math.max(targetCount, 1));
 }
 
 function dropFocusStrawberry(count) {
