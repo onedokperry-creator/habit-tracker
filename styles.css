@@ -1574,9 +1574,9 @@ select:focus {
   bottom: max(10px, env(safe-area-inset-bottom));
   z-index: 10;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 6px;
-  width: min(520px, calc(100% - 20px));
+  width: min(448px, calc(100% - 20px));
   padding: 8px;
   border-radius: 8px;
   transform: translateX(-50%);

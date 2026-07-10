@@ -479,7 +479,6 @@ const views = {
   tasks: document.querySelector("#tasks-view"),
   timer: document.querySelector("#timer-view"),
   records: document.querySelector("#records-view"),
-  insights: document.querySelector("#insights-view"),
   goals: document.querySelector("#goals-view"),
   settings: document.querySelector("#settings-view"),
   rewards: document.querySelector("#rewards-view"),
