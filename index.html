@@ -229,7 +229,10 @@
             <div class="focus-content">
               <p class="eyebrow">Focus</p>
               <img src="./assets/fiikun_cheer.png" alt="応援するふぃーくん" class="focus-bunny" />
-              <p class="focus-message">ぼく、ここで見てるよ。いちご、ためていこ🍓</p>
+              <p class="focus-message">
+                <span>ぼく、ここで見てるよ。</span>
+                <span>いちご、ためていこ🍓</span>
+              </p>
               <strong id="focus-timer-display">25:00</strong>
               <div class="focus-controls">
                 <button class="primary-button" type="button" id="focus-pause">一時停止</button>
@@ -282,6 +285,59 @@
             </div>
           </section>
 
+        </section>
+
+        <section class="view" id="insights-view" aria-labelledby="insights-title">
+          <header class="page-header compact">
+            <div>
+              <p class="eyebrow">Insight</p>
+              <h1 id="insights-title">ポモドーロインサイト</h1>
+            </div>
+            <img src="./assets/fiikun_strawberry.png" alt="いちごを持つふぃーくん" class="header-bunny" />
+          </header>
+
+          <section class="panel insights-summary-panel" aria-labelledby="insights-summary-title">
+            <div class="section-heading">
+              <div>
+                <h2 id="insights-summary-title">集中のようす</h2>
+                <p id="insights-date">今日</p>
+              </div>
+              <img src="./assets/clock.png" alt="" class="letter-icon" />
+            </div>
+            <div class="insight-stat-grid">
+              <article>
+                <span>今日集中</span>
+                <strong id="insight-today-minutes">0m</strong>
+              </article>
+              <article>
+                <span>7日平均</span>
+                <strong id="insight-average-minutes">0m</strong>
+              </article>
+              <article>
+                <span>今日ポモ</span>
+                <strong id="insight-today-pomos">0</strong>
+              </article>
+              <article>
+                <span>完了タスク</span>
+                <strong id="insight-completed-tasks">0</strong>
+              </article>
+            </div>
+          </section>
+
+          <section class="panel insight-berries-panel" aria-labelledby="insight-berries-title">
+            <div class="section-heading">
+              <h2 id="insight-berries-title">今日のいちご</h2>
+              <span id="insight-berry-count">0こ</span>
+            </div>
+            <div class="insight-berry-grid" id="insight-berry-grid" aria-label="今日のポモドーロ数"></div>
+          </section>
+
+          <section class="panel insight-breakdown-panel" aria-labelledby="insight-breakdown-title">
+            <div class="section-heading">
+              <h2 id="insight-breakdown-title">内訳</h2>
+            </div>
+            <div class="insight-breakdown-list" id="insight-breakdown-list"></div>
+          </section>
         </section>
 
         <section class="view" id="goals-view" aria-labelledby="goals-title">
@@ -663,6 +719,10 @@
         <button class="bottom-tab" type="button" data-view="records">
           <img src="./assets/letter.png" alt="" />
           <span>Log</span>
+        </button>
+        <button class="bottom-tab" type="button" data-view="insights">
+          <img src="./assets/strawberry.png" alt="" />
+          <span>Insight</span>
         </button>
         <button class="bottom-tab" type="button" data-view="goals">
           <img src="./assets/crown.png" alt="" />

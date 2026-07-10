@@ -765,6 +765,13 @@ select:focus {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
+.focus-message span {
+  display: block;
+  white-space: nowrap;
 }
 
 #focus-timer-display {
@@ -782,16 +789,14 @@ select:focus {
 
 .focus-basket {
   position: absolute;
-  left: 50%;
-  bottom: max(12px, env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 1;
-  width: min(92vw, 430px);
-  height: 116px;
-  border: 1px dashed #e6cabd;
-  border-radius: 8px 8px 28px 28px;
-  transform: translateX(-50%);
-  background: rgba(255, 253, 249, 0.78);
+  height: min(42vh, 310px);
+  background: linear-gradient(180deg, transparent, rgba(255, 241, 239, 0.42));
   overflow: hidden;
+  pointer-events: none;
 }
 
 .focus-falling-strawberry {
@@ -805,8 +810,6 @@ select:focus {
 
 .focus-stacked-strawberry {
   position: absolute;
-  width: 30px;
-  height: 30px;
   object-fit: contain;
   animation: strawberry-pop 260ms ease-out both;
 }
@@ -835,6 +838,102 @@ select:focus {
   100% {
     transform: scale(1);
   }
+}
+
+.insights-summary-panel,
+.insight-berries-panel,
+.insight-breakdown-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.insight-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.insight-stat-grid article {
+  min-height: 88px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.insight-stat-grid span,
+.insight-breakdown-heading span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.insight-stat-grid strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.insight-berry-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 108px;
+  padding: 14px;
+  border: 1px dashed #e6cabd;
+  border-radius: 8px;
+  background: rgba(255, 253, 249, 0.72);
+}
+
+.insight-berry-grid > img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.insight-breakdown-list {
+  display: grid;
+  gap: 10px;
+}
+
+.insight-breakdown-item {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.insight-breakdown-item img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.insight-breakdown-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.insight-progress {
+  height: 8px;
+  border-radius: 999px;
+  background: #fff1ef;
+  overflow: hidden;
+}
+
+.insight-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--pink), #f3c2b4);
 }
 
 .record-item {
@@ -1475,9 +1574,9 @@ select:focus {
   bottom: max(10px, env(safe-area-inset-bottom));
   z-index: 10;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 6px;
-  width: min(448px, calc(100% - 20px));
+  width: min(520px, calc(100% - 20px));
   padding: 8px;
   border-radius: 8px;
   transform: translateX(-50%);
@@ -1533,6 +1632,9 @@ select:focus {
   .task-board,
   .timer-panel,
   .record-panel,
+  .insights-summary-panel,
+  .insight-berries-panel,
+  .insight-breakdown-panel,
   .goal-form-panel,
   .goal-list-panel,
   .calendar-panel,

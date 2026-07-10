@@ -479,6 +479,7 @@ const views = {
   tasks: document.querySelector("#tasks-view"),
   timer: document.querySelector("#timer-view"),
   records: document.querySelector("#records-view"),
+  insights: document.querySelector("#insights-view"),
   goals: document.querySelector("#goals-view"),
   settings: document.querySelector("#settings-view"),
   rewards: document.querySelector("#rewards-view"),
@@ -528,6 +529,14 @@ const nextMonth = document.querySelector("#next-month");
 const letterDate = document.querySelector("#letter-date");
 const letterGreeting = document.querySelector("#letter-greeting");
 const letterBody = document.querySelector("#letter-body");
+const insightsDate = document.querySelector("#insights-date");
+const insightTodayMinutes = document.querySelector("#insight-today-minutes");
+const insightAverageMinutes = document.querySelector("#insight-average-minutes");
+const insightTodayPomos = document.querySelector("#insight-today-pomos");
+const insightCompletedTasks = document.querySelector("#insight-completed-tasks");
+const insightBerryCount = document.querySelector("#insight-berry-count");
+const insightBerryGrid = document.querySelector("#insight-berry-grid");
+const insightBreakdownList = document.querySelector("#insight-breakdown-list");
 const goalForm = document.querySelector("#goal-form");
 const goalIdInput = document.querySelector("#goal-id");
 const goalTitleInput = document.querySelector("#goal-title");
@@ -1102,6 +1111,7 @@ function render() {
   renderHome();
   renderTimer();
   renderRecords();
+  renderInsights();
   renderCalendar();
   renderLetter();
   renderGoals();
@@ -1322,8 +1332,110 @@ function renderRecords() {
         </div>
         <span class="category-pill Main">Pomodoro</span>
       `;
-      recordList.appendChild(item);
+    recordList.appendChild(item);
+  });
+}
+
+function renderInsights() {
+  const todayKey = toDateKey(new Date());
+  const todayRecords = getRecordsForDate(todayKey);
+  const todayMinutes = sumRecordMinutes(todayRecords);
+  const lastSevenMinutes = getLastSevenDateKeys().map((dateKey) => sumRecordMinutes(getRecordsForDate(dateKey)));
+  const averageMinutes = Math.round(lastSevenMinutes.reduce((sum, minutes) => sum + minutes, 0) / 7);
+  const completedToday = tasks.filter((task) => task.completedAt && toDateKey(task.completedAt) === todayKey).length;
+
+  insightsDate.textContent = new Date().toLocaleDateString("ja-JP", {
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  });
+  insightTodayMinutes.textContent = formatInsightMinutes(todayMinutes);
+  insightAverageMinutes.textContent = formatInsightMinutes(averageMinutes);
+  insightTodayPomos.textContent = String(todayRecords.length);
+  insightCompletedTasks.textContent = String(completedToday);
+  insightBerryCount.textContent = `${todayRecords.length}こ`;
+
+  insightBerryGrid.innerHTML = "";
+  const berryCount = Math.max(todayRecords.length, todayMinutes > 0 ? 1 : 0);
+  if (berryCount === 0) {
+    insightBerryGrid.appendChild(createEmptyState("集中すると、ここにいちごが並びます。", "fiikun_sleep.png"));
+  } else {
+    Array.from({ length: Math.min(berryCount, 32) }, (_, index) => {
+      const img = document.createElement("img");
+      img.src = "./assets/strawberry.png";
+      img.alt = "";
+      img.style.transform = `rotate(${(index % 5 - 2) * 5}deg)`;
+      insightBerryGrid.appendChild(img);
+      return img;
     });
+  }
+
+  renderInsightBreakdown(todayRecords, completedToday);
+}
+
+function renderInsightBreakdown(todayRecords, completedToday) {
+  const rows = [
+    {
+      label: "ポモドーロ",
+      value: `${formatInsightMinutes(sumRecordMinutes(todayRecords))} / ${todayRecords.length}回`,
+      icon: "clock.png",
+      percent: Math.min(100, todayRecords.length * 20),
+    },
+    {
+      label: "タスク",
+      value: `${completedToday}件完了`,
+      icon: "plant.png",
+      percent: Math.min(100, completedToday * 20),
+    },
+    {
+      label: "いちご畑",
+      value: `ステージ ${garden.stage} / ${garden.maxStage}`,
+      icon: "strawberry.png",
+      percent: Math.round((garden.stage / garden.maxStage) * 100),
+    },
+  ];
+
+  insightBreakdownList.innerHTML = "";
+  rows.forEach((row) => {
+    const item = document.createElement("article");
+    item.className = "insight-breakdown-item";
+    item.innerHTML = `
+      <img src="./assets/${row.icon}" alt="" />
+      <div>
+        <div class="insight-breakdown-heading">
+          <strong>${row.label}</strong>
+          <span>${row.value}</span>
+        </div>
+        <div class="insight-progress"><span style="width: ${row.percent}%"></span></div>
+      </div>
+    `;
+    insightBreakdownList.appendChild(item);
+  });
+}
+
+function getRecordsForDate(dateKey) {
+  return pomodoroRecords.filter((record) => toDateKey(record.completedAt) === dateKey);
+}
+
+function sumRecordMinutes(records) {
+  return records.reduce((sum, record) => sum + record.minutes, 0);
+}
+
+function getLastSevenDateKeys() {
+  const date = new Date();
+  return Array.from({ length: 7 }, (_, index) => {
+    const day = new Date(date);
+    day.setDate(date.getDate() - index);
+    return toDateKey(day);
+  });
+}
+
+function formatInsightMinutes(totalMinutes) {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`;
+  if (hours > 0) return `${hours}h`;
+  return `${minutes}m`;
 }
 
 function renderCalendar() {
@@ -2232,14 +2344,18 @@ function dropFocusStrawberry(count) {
 
 function addFocusBasketStrawberry(count) {
   const berry = document.createElement("img");
-  const column = (count - 1) % 9;
   const row = Math.floor((count - 1) / 9);
+  const left = 4 + Math.random() * 88;
+  const bottom = 8 + row * 19 + Math.random() * 14;
+  const size = 24 + Math.random() * 14;
   berry.src = "./assets/strawberry.png";
   berry.alt = "";
   berry.className = "focus-stacked-strawberry";
-  berry.style.left = `${8 + column * 10}%`;
-  berry.style.bottom = `${6 + row * 16}px`;
-  berry.style.transform = `rotate(${(count % 5 - 2) * 7}deg)`;
+  berry.style.left = `${left}%`;
+  berry.style.bottom = `${bottom}px`;
+  berry.style.width = `${size}px`;
+  berry.style.height = `${size}px`;
+  berry.style.transform = `translateX(-50%) rotate(${Math.round(Math.random() * 34 - 17)}deg)`;
   focusBasket.appendChild(berry);
 }
 
