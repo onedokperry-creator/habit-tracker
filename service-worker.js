@@ -1,4 +1,4 @@
-const CACHE_NAME = "fiikun-app-v1";
+const CACHE_NAME = "fiikun-app-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -13,6 +13,8 @@ const APP_SHELL = [
   "./assets/clock.png",
   "./assets/gift.png"
 ];
+
+const NETWORK_FIRST_TYPES = new Set(["document", "script", "style", "manifest"]);
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -38,19 +40,43 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(event.request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          return response;
-        })
-        .catch(() => caches.match("./index.html"));
-    })
+    shouldUseNetworkFirst(event.request)
+      ? networkFirst(event.request)
+      : cacheFirst(event.request)
   );
 });
+
+function shouldUseNetworkFirst(request) {
+  const url = new URL(request.url);
+  return NETWORK_FIRST_TYPES.has(request.destination) ||
+    url.pathname.endsWith("/") ||
+    url.pathname.endsWith(".html") ||
+    url.pathname.endsWith(".js") ||
+    url.pathname.endsWith(".css") ||
+    url.pathname.endsWith(".json");
+}
+
+async function networkFirst(request) {
+  try {
+    const response = await fetch(request);
+    const cache = await caches.open(CACHE_NAME);
+    cache.put(request, response.clone());
+    return response;
+  } catch {
+    const cached = await caches.match(request);
+    return cached || caches.match("./index.html");
+  }
+}
+
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+
+  const response = await fetch(request);
+  const cache = await caches.open(CACHE_NAME);
+  cache.put(request, response.clone());
+  return response;
+}
 
 self.addEventListener("push", (event) => {
   const fallback = {

@@ -1694,7 +1694,8 @@ async function registerPwaServiceWorker() {
   if (!/^https?:$/.test(window.location.protocol)) return;
 
   try {
-    await navigator.serviceWorker.register("./service-worker.js");
+    const registration = await navigator.serviceWorker.register("./service-worker.js");
+    await registration.update();
   } catch {
     // file://や一部のプレビュー環境では登録できないため、静かに通常表示へ戻します。
   }
