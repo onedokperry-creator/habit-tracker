@@ -465,6 +465,8 @@ let remainingSeconds = timerMinutes * 60;
 let timerRunning = false;
 let timerInterval = null;
 let notificationCheckInterval = null;
+let focusElapsedSeconds = 0;
+let focusStrawberryCount = 0;
 let visibleMonth = new Date();
 let selectedDateKey = toDateKey(new Date());
 
@@ -507,6 +509,12 @@ const timerMode = document.querySelector("#timer-mode");
 const timerStart = document.querySelector("#timer-start");
 const timerReset = document.querySelector("#timer-reset");
 const timerComplete = document.querySelector("#timer-complete");
+const focusOverlay = document.querySelector("#focus-overlay");
+const focusTimerDisplay = document.querySelector("#focus-timer-display");
+const focusSky = document.querySelector("#focus-sky");
+const focusBasket = document.querySelector("#focus-basket");
+const focusPause = document.querySelector("#focus-pause");
+const focusExit = document.querySelector("#focus-exit");
 const recordList = document.querySelector("#record-list");
 const recordTotal = document.querySelector("#record-total");
 const clearRecords = document.querySelector("#clear-records");
@@ -620,6 +628,7 @@ timerStart.addEventListener("click", () => {
 timerReset.addEventListener("click", () => {
   pauseTimer();
   remainingSeconds = timerMinutes * 60;
+  resetFocusMode();
   renderTimer();
 });
 
@@ -627,7 +636,16 @@ timerComplete.addEventListener("click", () => {
   addPomodoroRecord(timerMinutes, "手動で記録");
   pauseTimer();
   remainingSeconds = timerMinutes * 60;
+  resetFocusMode();
   render();
+});
+
+focusPause.addEventListener("click", () => {
+  timerRunning ? pauseTimer() : startTimer();
+});
+
+focusExit.addEventListener("click", () => {
+  hideFocusMode();
 });
 
 clearRecords.addEventListener("click", () => {
@@ -1242,8 +1260,11 @@ function getTodayRecommendations() {
 function renderTimer() {
   const minutes = Math.floor(remainingSeconds / 60);
   const seconds = remainingSeconds % 60;
-  timerDisplay.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  const timeText = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  timerDisplay.textContent = timeText;
+  focusTimerDisplay.textContent = timeText;
   timerStart.textContent = timerRunning ? "一時停止" : "スタート";
+  focusPause.textContent = timerRunning ? "一時停止" : "再開";
   timerMode.textContent = timerRunning ? "集中しています" : "集中時間";
 }
 
@@ -2138,14 +2159,18 @@ function prepareRewardAnimation() {
 
 function startTimer() {
   timerRunning = true;
+  showFocusMode();
   renderTimer();
   timerInterval = window.setInterval(() => {
     remainingSeconds -= 1;
+    focusElapsedSeconds += 1;
+    updateFocusStrawberries();
     if (remainingSeconds <= 0) {
       addPomodoroRecord(timerMinutes, "自動で記録");
       notifyPomodoroFinished(timerMinutes);
       pauseTimer();
       remainingSeconds = timerMinutes * 60;
+      resetFocusMode();
       render();
       return;
     }
@@ -2160,6 +2185,61 @@ function pauseTimer() {
     timerInterval = null;
   }
   renderTimer();
+}
+
+function showFocusMode() {
+  focusOverlay.hidden = false;
+  document.body.classList.add("focus-mode-active");
+}
+
+function hideFocusMode() {
+  focusOverlay.hidden = true;
+  document.body.classList.remove("focus-mode-active");
+}
+
+function resetFocusMode() {
+  focusElapsedSeconds = 0;
+  focusStrawberryCount = 0;
+  focusSky.innerHTML = "";
+  focusBasket.innerHTML = "";
+  hideFocusMode();
+}
+
+function updateFocusStrawberries() {
+  const nextCount = Math.floor(focusElapsedSeconds / 30);
+  while (focusStrawberryCount < nextCount) {
+    focusStrawberryCount += 1;
+    dropFocusStrawberry(focusStrawberryCount);
+  }
+}
+
+function dropFocusStrawberry(count) {
+  const berry = document.createElement("img");
+  const left = 12 + ((count * 23) % 76);
+  berry.src = "./assets/strawberry.png";
+  berry.alt = "";
+  berry.className = "focus-falling-strawberry";
+  berry.style.left = `${left}%`;
+  berry.style.animationDuration = `${1.7 + (count % 4) * 0.12}s`;
+  focusSky.appendChild(berry);
+
+  window.setTimeout(() => {
+    berry.remove();
+    addFocusBasketStrawberry(count);
+  }, 1800);
+}
+
+function addFocusBasketStrawberry(count) {
+  const berry = document.createElement("img");
+  const column = (count - 1) % 9;
+  const row = Math.floor((count - 1) / 9);
+  berry.src = "./assets/strawberry.png";
+  berry.alt = "";
+  berry.className = "focus-stacked-strawberry";
+  berry.style.left = `${8 + column * 10}%`;
+  berry.style.bottom = `${6 + row * 16}px`;
+  berry.style.transform = `rotate(${(count % 5 - 2) * 7}deg)`;
+  focusBasket.appendChild(berry);
 }
 
 function addPomodoroRecord(minutes, note) {
