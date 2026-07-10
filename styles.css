@@ -739,13 +739,14 @@ select:focus {
 
 .focus-sky {
   position: absolute;
-  inset: 0 0 110px;
+  inset: 0;
+  z-index: 1;
   pointer-events: none;
 }
 
 .focus-content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: grid;
   justify-items: center;
   gap: 12px;
@@ -792,51 +793,56 @@ select:focus {
   left: 0;
   right: 0;
   bottom: 0;
+  top: 0;
   z-index: 1;
-  height: min(42vh, 310px);
-  background: linear-gradient(180deg, transparent, rgba(255, 241, 239, 0.42));
+  background: linear-gradient(180deg, transparent 34%, rgba(255, 241, 239, 0.28));
   overflow: hidden;
   pointer-events: none;
 }
 
 .focus-falling-strawberry {
   position: absolute;
-  top: -46px;
+  top: -56px;
   width: 34px;
   height: 34px;
   object-fit: contain;
-  animation: strawberry-fall 1.8s cubic-bezier(0.2, 0.76, 0.34, 1) forwards;
+  transform: translateX(-50%) rotate(var(--start-rotate, -18deg));
+  animation: strawberry-fall 1.55s cubic-bezier(0.18, 0.78, 0.24, 1) forwards;
 }
 
 .focus-stacked-strawberry {
   position: absolute;
   object-fit: contain;
+  transform: translate(-50%, -50%) rotate(var(--berry-rotate, 0deg));
   animation: strawberry-pop 260ms ease-out both;
 }
 
 @keyframes strawberry-fall {
   0% {
-    transform: translateY(-20px) rotate(-16deg);
+    transform: translate(-50%, -24px) rotate(var(--start-rotate, -18deg));
     opacity: 0;
   }
   12% {
     opacity: 1;
   }
   100% {
-    transform: translateY(calc(100vh - 140px)) rotate(18deg);
+    transform: translate(-50%, calc(var(--drop-y, 70vh) + 56px)) rotate(var(--end-rotate, 18deg));
     opacity: 1;
   }
 }
 
 @keyframes strawberry-pop {
   0% {
-    transform: scale(0.4);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.42) rotate(var(--berry-rotate, 0deg));
   }
   80% {
-    transform: scale(1.1);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08) rotate(var(--berry-rotate, 0deg));
   }
   100% {
-    transform: scale(1);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(var(--berry-rotate, 0deg));
   }
 }
 

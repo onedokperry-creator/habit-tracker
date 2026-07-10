@@ -467,6 +467,8 @@ let timerInterval = null;
 let notificationCheckInterval = null;
 let focusElapsedSeconds = 0;
 let focusStrawberryCount = 0;
+let focusStrawberryPlan = [];
+let focusStrawberryEverySeconds = 30;
 let visibleMonth = new Date();
 let selectedDateKey = toDateKey(new Date());
 
@@ -2302,6 +2304,7 @@ function pauseTimer() {
 function showFocusMode() {
   focusOverlay.hidden = false;
   document.body.classList.add("focus-mode-active");
+  prepareFocusStrawberryPlan();
 }
 
 function hideFocusMode() {
@@ -2312,50 +2315,109 @@ function hideFocusMode() {
 function resetFocusMode() {
   focusElapsedSeconds = 0;
   focusStrawberryCount = 0;
+  focusStrawberryPlan = [];
+  focusStrawberryEverySeconds = 30;
   focusSky.innerHTML = "";
   focusBasket.innerHTML = "";
   hideFocusMode();
 }
 
 function updateFocusStrawberries() {
-  const nextCount = Math.floor(focusElapsedSeconds / 30);
+  if (!focusStrawberryPlan.length) prepareFocusStrawberryPlan();
+  const nextCount = Math.min(
+    focusStrawberryPlan.length,
+    Math.floor(focusElapsedSeconds / focusStrawberryEverySeconds),
+  );
   while (focusStrawberryCount < nextCount) {
     focusStrawberryCount += 1;
     dropFocusStrawberry(focusStrawberryCount);
   }
 }
 
+function prepareFocusStrawberryPlan() {
+  const rect = focusOverlay.getBoundingClientRect();
+  const width = Math.max(rect.width, window.innerWidth, 320);
+  const height = Math.max(rect.height, window.innerHeight, 560);
+  const totalSeconds = Math.max(timerMinutes * 60, 60);
+  const cols = Math.max(6, Math.floor(width / 42));
+  const rows = Math.max(9, Math.floor(height / 42));
+  const maxSlots = cols * rows;
+  const targetCount = Math.min(maxSlots, Math.max(28, Math.round(totalSeconds / 9)));
+  const cells = [];
+  const cellWidth = width / cols;
+  const cellHeight = height / rows;
+
+  for (let row = 0; row < rows; row += 1) {
+    for (let col = 0; col < cols; col += 1) {
+      const topBias = row / Math.max(rows - 1, 1);
+      const size = clampNumber(Math.round(Math.min(cellWidth, cellHeight) * (0.56 + Math.random() * 0.34)), 22, 46);
+      const jitterX = (Math.random() - 0.5) * cellWidth * 0.42;
+      const jitterY = (Math.random() - 0.5) * cellHeight * 0.42;
+      const x = clampNumber((col + 0.5) * cellWidth + jitterX, size / 2 + 8, width - size / 2 - 8);
+      const y = clampNumber((row + 0.5) * cellHeight + jitterY, size / 2 + 8, height - size / 2 - 8);
+      cells.push({
+        left: (x / width) * 100,
+        top: (y / height) * 100,
+        size,
+        rotate: Math.round(-72 + Math.random() * 144),
+        fallRotate: Math.round((Math.random() > 0.5 ? 1 : -1) * (120 + Math.random() * 220)),
+        delayWeight: 0.7 + topBias * 0.6 + Math.random() * 0.3,
+      });
+    }
+  }
+
+  focusStrawberryPlan = shuffleArray(cells)
+    .sort((a, b) => a.delayWeight - b.delayWeight)
+    .slice(0, targetCount);
+  focusStrawberryEverySeconds = Math.max(2.4, totalSeconds / Math.max(targetCount, 1));
+}
+
 function dropFocusStrawberry(count) {
   const berry = document.createElement("img");
-  const left = 12 + ((count * 23) % 76);
+  const plan = focusStrawberryPlan[count - 1];
+  if (!plan) return;
   berry.src = "./assets/strawberry.png";
   berry.alt = "";
   berry.className = "focus-falling-strawberry";
-  berry.style.left = `${left}%`;
-  berry.style.animationDuration = `${1.7 + (count % 4) * 0.12}s`;
+  berry.style.left = `${plan.left}%`;
+  berry.style.width = `${plan.size}px`;
+  berry.style.height = `${plan.size}px`;
+  berry.style.setProperty("--drop-y", `${plan.top}vh`);
+  berry.style.setProperty("--start-rotate", `${plan.rotate - plan.fallRotate}deg`);
+  berry.style.setProperty("--end-rotate", `${plan.rotate}deg`);
+  berry.style.animationDuration = `${1.05 + Math.random() * 0.55}s`;
   focusSky.appendChild(berry);
 
   window.setTimeout(() => {
     berry.remove();
-    addFocusBasketStrawberry(count);
-  }, 1800);
+    addFocusBasketStrawberry(plan);
+  }, 1650);
 }
 
-function addFocusBasketStrawberry(count) {
+function addFocusBasketStrawberry(plan) {
   const berry = document.createElement("img");
-  const row = Math.floor((count - 1) / 9);
-  const left = 4 + Math.random() * 88;
-  const bottom = 8 + row * 19 + Math.random() * 14;
-  const size = 24 + Math.random() * 14;
   berry.src = "./assets/strawberry.png";
   berry.alt = "";
   berry.className = "focus-stacked-strawberry";
-  berry.style.left = `${left}%`;
-  berry.style.bottom = `${bottom}px`;
-  berry.style.width = `${size}px`;
-  berry.style.height = `${size}px`;
-  berry.style.transform = `translateX(-50%) rotate(${Math.round(Math.random() * 34 - 17)}deg)`;
+  berry.style.left = `${plan.left}%`;
+  berry.style.top = `${plan.top}%`;
+  berry.style.width = `${plan.size}px`;
+  berry.style.height = `${plan.size}px`;
+  berry.style.setProperty("--berry-rotate", `${plan.rotate}deg`);
   focusBasket.appendChild(berry);
+}
+
+function clampNumber(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function shuffleArray(items) {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+  }
+  return copy;
 }
 
 function addPomodoroRecord(minutes, note) {
