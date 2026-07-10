@@ -618,6 +618,15 @@ select:focus {
   text-decoration: line-through;
 }
 
+.task-history-panel > summary span:last-child {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.task-history-list .empty-state {
+  min-height: 128px;
+}
+
 .task-item .category-pill {
   grid-column: 2;
   justify-self: start;

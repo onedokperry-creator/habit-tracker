@@ -483,6 +483,8 @@ const views = {
 };
 
 const taskList = document.querySelector("#task-list");
+const taskHistoryList = document.querySelector("#task-history-list");
+const taskHistoryCount = document.querySelector("#task-history-count");
 const homeTaskList = document.querySelector("#home-task-list");
 const taskForm = document.querySelector("#task-form");
 const taskTitle = document.querySelector("#task-title");
@@ -1094,44 +1096,68 @@ function render() {
 function renderTasks() {
   const visibleTasks =
     activeFilter === "all" ? tasks : tasks.filter((task) => task.category === activeFilter);
+  const activeTasks = visibleTasks.filter((task) => !task.done);
+  const completedTasks = visibleTasks
+    .filter((task) => task.done)
+    .sort((a, b) => new Date(b.completedAt || 0) - new Date(a.completedAt || 0));
 
-  taskCount.textContent = `${visibleTasks.length}件`;
+  taskCount.textContent = `${activeTasks.length}件`;
   taskList.innerHTML = "";
+  taskHistoryList.innerHTML = "";
+  taskHistoryCount.textContent = `${completedTasks.length}件`;
 
-  if (visibleTasks.length === 0) {
+  if (activeTasks.length === 0) {
     taskList.appendChild(createEmptyState("この表示にタスクはありません。", "fiikun_sleep.png"));
-    return;
+  } else {
+    activeTasks.forEach((task) => {
+      taskList.appendChild(createTaskItem(task));
+    });
   }
 
-  visibleTasks.forEach((task) => {
-    const item = document.createElement("article");
-    item.className = `task-item ${task.done ? "done" : ""}`;
+  if (completedTasks.length === 0) {
+    taskHistoryList.appendChild(createEmptyState("完了したタスクはここに残ります。", "fiikun_happy.png"));
+  } else {
+    completedTasks.forEach((task) => {
+      taskHistoryList.appendChild(createTaskItem(task));
+    });
+  }
+}
 
-    item.innerHTML = `
-      <img class="task-icon-img" src="./assets/${task.icon}" alt="" />
-      <div>
-        <p class="task-title"></p>
-        <p class="task-meta">${task.done ? "完了済み" : "これから育てるタスク"}${formatTopicSuffix(task.topic)}</p>
-      </div>
-      <span class="category-pill ${task.category}">${formatPriorityLabel(task.category)}</span>
-      <div class="task-actions">
-        <button class="check-button" type="button" aria-label="${task.title}を完了切替">${
-          task.done ? "✓" : "○"
-        }</button>
-        <button class="delete-button" type="button" aria-label="${task.title}を削除">×</button>
-      </div>
-    `;
+function createTaskItem(task) {
+  const item = document.createElement("article");
+  item.className = `task-item ${task.done ? "done" : ""}`;
 
-    item.querySelector(".task-title").textContent = task.title;
-    item.querySelector(".check-button").addEventListener("click", () => toggleTask(task.id));
-    item.querySelector(".delete-button").addEventListener("click", () => deleteTask(task.id));
-    taskList.appendChild(item);
-  });
+  item.innerHTML = `
+    <img class="task-icon-img" src="./assets/${task.icon}" alt="" />
+    <div>
+      <p class="task-title"></p>
+      <p class="task-meta">${task.done ? formatCompletedTaskMeta(task) : "これから育てるタスク"}${formatTopicSuffix(task.topic)}</p>
+    </div>
+    <span class="category-pill ${task.category}">${formatPriorityLabel(task.category)}</span>
+    <div class="task-actions">
+      <button class="check-button" type="button" aria-label="${task.title}を完了切替">${
+        task.done ? "✓" : "○"
+      }</button>
+      <button class="delete-button" type="button" aria-label="${task.title}を削除">×</button>
+    </div>
+  `;
+
+  item.querySelector(".task-title").textContent = task.title;
+  item.querySelector(".check-button").addEventListener("click", () => toggleTask(task.id));
+  item.querySelector(".delete-button").addEventListener("click", () => deleteTask(task.id));
+  return item;
+}
+
+function formatCompletedTaskMeta(task) {
+  if (!task.completedAt) return "完了済み";
+  const date = new Date(task.completedAt);
+  return `完了済み / ${date.toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" })}`;
 }
 
 function renderHome() {
   const total = tasks.length;
   const done = tasks.filter((task) => task.done).length;
+  const activeTasks = tasks.filter((task) => !task.done);
   const todayRecords = getTodayRecords();
   const minutes = todayRecords.reduce((sum, record) => sum + record.minutes, 0);
   const fiikunMood = getHomeFiikunMood(total, done, todayRecords.length);
@@ -1160,7 +1186,7 @@ function renderHome() {
   renderHomeRecommendations();
 
   homeTaskList.innerHTML = "";
-  tasks.slice(0, 4).forEach((task) => {
+  activeTasks.slice(0, 4).forEach((task) => {
     const item = document.createElement("article");
     item.className = `mini-task ${task.done ? "done" : ""}`;
     item.innerHTML = `
@@ -1175,7 +1201,9 @@ function renderHome() {
     homeTaskList.appendChild(item);
   });
 
-  if (tasks.length === 0) {
+  if (activeTasks.length === 0 && tasks.length > 0) {
+    homeTaskList.appendChild(createEmptyState("今日のタスクは全部できました。", "fiikun_happy.png"));
+  } else if (tasks.length === 0) {
     homeTaskList.appendChild(createEmptyState("タスクを追加すると、ここに表示されます。", "fiikun_think.png"));
   }
 }
