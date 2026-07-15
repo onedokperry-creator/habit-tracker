@@ -56,6 +56,20 @@ const authMessage = document.querySelector("#auth-message");
 const signupButton = document.querySelector("#signup-button");
 const syncStatus = document.querySelector("#sync-status");
 
+const fallbackIcons = {
+  plant:
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fff7fb'/%3E%3Cpath d='M21 34h22l-3 18H24z' fill='%23f7d5bd' stroke='%23786d9e' stroke-width='3'/%3E%3Cpath d='M32 35c-1-9 2-17 12-20-1 10-6 16-12 20Zm-1 0c-7-2-12-7-12-17 9 2 13 9 12 17Z' fill='%23bfe7d7' stroke='%23786d9e' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E",
+  strawberry:
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fff7fb'/%3E%3Cpath d='M32 17c13 0 21 9 18 22-2 10-10 18-18 18s-16-8-18-18c-3-13 5-22 18-22Z' fill='%23f2a0a8' stroke='%23786d9e' stroke-width='3'/%3E%3Cpath d='M24 18c2-7 6-8 8-3 2-5 6-4 8 3-6 3-10 3-16 0Z' fill='%23bfe7d7' stroke='%23786d9e' stroke-width='3' stroke-linejoin='round'/%3E%3Ccircle cx='25' cy='33' r='2' fill='%23fff4c7'/%3E%3Ccircle cx='36' cy='39' r='2' fill='%23fff4c7'/%3E%3Ccircle cx='32' cy='29' r='2' fill='%23fff4c7'/%3E%3C/svg%3E",
+  task:
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fff7fb'/%3E%3Cpath d='M21 17h22v30H21z' fill='%23ffffff' stroke='%23786d9e' stroke-width='3'/%3E%3Cpath d='M27 27h10M27 35h8' stroke='%23786d9e' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='m40 42 10-10 4 4-10 10-6 2z' fill='%23f2a0a8' stroke='%23786d9e' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E",
+};
+
+function imageWithFallback(src, fallback, className = "") {
+  const classAttribute = className ? ` class="${className}"` : "";
+  return `<img${classAttribute} src="${src}" alt="" onerror="this.onerror=null;this.src='${fallback}'" />`;
+}
+
 document.querySelectorAll(".nav-tab").forEach((button) => {
   button.addEventListener("click", () => setView(button.dataset.view));
 });
@@ -172,7 +186,7 @@ function renderTasks() {
     item.className = `task-item ${task.done ? "done" : ""}`;
 
     item.innerHTML = `
-      <img class="task-icon-img" src="./assets/${task.icon}" alt="" />
+      ${imageWithFallback(`./assets/${task.icon || "pencil.png"}`, fallbackIcons.task, "task-icon-img")}
       <div>
         <p class="task-title"></p>
         <p class="task-meta">${task.done ? "完了済み" : "これから育てるタスク"}</p>
@@ -217,7 +231,10 @@ function renderHome() {
   for (let index = 0; index < plots; index += 1) {
     const plot = document.createElement("div");
     plot.className = `berry-plot ${index < done ? "done" : ""}`;
-    plot.innerHTML = `<img src="./assets/${index < done ? "strawberry.png" : "plant.png"}" alt="" />`;
+    plot.innerHTML = imageWithFallback(
+      `./assets/${index < done ? "strawberry.png" : "plant.png"}`,
+      index < done ? fallbackIcons.strawberry : fallbackIcons.plant
+    );
     strawberryField.appendChild(plot);
   }
 
@@ -226,7 +243,7 @@ function renderHome() {
     const item = document.createElement("article");
     item.className = `mini-task ${task.done ? "done" : ""}`;
     item.innerHTML = `
-      <img src="./assets/${task.icon}" alt="" />
+      ${imageWithFallback(`./assets/${task.icon || "pencil.png"}`, fallbackIcons.task)}
       <div>
         <p class="task-title"></p>
         <p class="task-meta">${task.done ? "できた" : "今日の約束"}</p>
@@ -246,7 +263,7 @@ function createEmptyState(message, image) {
   const empty = document.createElement("div");
   empty.className = "empty-state";
   empty.innerHTML = `
-    <img src="./assets/${image}" alt="" />
+    ${imageWithFallback(`./assets/${image}`, fallbackIcons.task)}
     <p>${message}</p>
   `;
   return empty;
@@ -383,4 +400,3 @@ async function initializeAuth() {
 }
 
 initializeAuth();
-
